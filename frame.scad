@@ -1,6 +1,13 @@
 // (c) 2014 juewei@fabfolk.com
 // GPLv2 or ask.
 
+frame_width=412;
+bar_l1=570;
+bar_l2=980;
+side_x=220;
+x1=(bar_l1-frame_width)/2;
+x2=(bar_l2-frame_width)/2;
+
 module lower_beam()
 {
   lhl=1500;	// length of lower beam 
@@ -18,9 +25,9 @@ module lower_beam()
       rotate([-90,0,0]) translate([45,-22,-10]) cylinder(60,8,8); 
 
       // Pocket for bottom bar rear
-		translate([420, -10, -10]) cube([37, 60, 17]);
+		translate([420, -10, -10]) cube([35, 60, 17]);
 		// Hole for bottom bar rear	
-		translate([420+37/2, 22, 0]) cylinder(50, 7,7);
+		translate([420+35/2, 22, 0]) cylinder(50, 7,7);
 	   // 480?? Hole for bolting rear strut
 	   rotate([-90,0,0]) translate([480,-22,-10]) cylinder(60,d1/2,d1/2); 
 
@@ -30,7 +37,7 @@ module lower_beam()
 	   rotate([-90,0,0]) translate([(988+885)/2,-22,-10]) cylinder(60,d1/2,d1/2);     
 
       // Pocket for for bottom bar front
-		translate([1415, -10, -10]) cube([37, 60, 17]);
+		translate([1415, -10, -10]) cube([35, 60, 17]);
 		// Hole for bottom bar front	
 		translate([1415+37/2, 22, 0]) cylinder(50, 7,7);
 	   // 1400?? Hole for bolting front strut
@@ -66,8 +73,8 @@ module side_support()
 		rotate([0,-15,0]) translate([60,22,-20]) cylinder(80,8,8); 
       
 		// Slanted ends
-      translate([0,0,44]) rotate([0,180-15,0])  translate([0,-10,-10]) cube([12,60,60]);
-      translate([lss,0,0]) rotate([0,-15,0]) translate([0,-10,-10]) cube([12,60,60]);
+      translate([0,0,44])  rotate([0,180-15,0]) translate([0,-10,-10]) cube([12,60,60]);
+      translate([lss,0,0]) rotate([0,-15,0])    translate([0,-10,-10]) cube([12,60,60]);
 
 		// Hole for upper triangle bolt
 		rotate([-90,0,0]) translate([472,-38,-10]) cylinder(60,7,7); 
@@ -82,8 +89,71 @@ module side_support()
     }
 }
 
-lower_beam();
-translate([0,-400,0]) scale([1,-1,1]) lower_beam();
+module bottom_center_bar()
+{
+  difference()
+    {
+		cube([bar_l2,34,53]);
 
-translate([911,220,-53+7]) rotate([0,90+15,-90]) side_support();
-translate([911+44,-400-220,-53+7]) rotate([0,90+15, 90]) side_support();
+		// cut back edges
+      translate([0,     0,53]) rotate([0,45,0])   translate([0,-10,-10]) cube([8,60,20]);
+      translate([bar_l2,0,53]) rotate([0,135,0])  translate([0,-10,-10]) cube([8,60,20]);
+      
+      // lower beam pockets
+      translate([x2-45/2,            -10,53-7]) cube([45, 60, 17]);
+      translate([x2-45/2+frame_width,-10,53-7]) cube([45, 60, 17]);
+
+	   // holes for center struts
+		rotate([-90,0,0]) translate([x2+44/2*2,            -53/2,-10]) cylinder(60,7,7); 
+		rotate([-90,0,0]) translate([x2+frame_width-44/2*2,-53/2,-10]) cylinder(60,7,7); 
+
+		// holes for side supports
+		rotate([-90,0,0]) translate([x2-side_x+8,            -53/2,-10]) cylinder(60,7,7); 
+		rotate([-90,0,0]) translate([x2+frame_width+side_x-8,-53/2,-10]) cylinder(60,7,7); 
+
+    }
+}
+
+module bottom_bar()
+{
+  x2=(bar_l1-85)/2;
+  difference()
+    {
+  		union()
+        {
+			cube([bar_l1,34,53]);
+			translate([0,0,-9]) cube([60,34,9]);
+			translate([bar_l1-60,0,-9]) cube([60,34,9]);
+	 	  }
+      // cut back edges
+      translate([0,     0,53]) rotate([0,45,0])   translate([0,-10,-10]) cube([8,60,20]);
+      translate([bar_l1,0,53]) rotate([0,135,0])  translate([0,-10,-10]) cube([8,60,20]);
+
+		// beam pockets
+      translate([x1-45/2,            -10,53-7]) cube([45,50,17]);
+		translate([x1-45/2+frame_width,-10,53-7]) cube([45,50,17]);
+
+		// beam holes
+		translate([x1,            34/2,-10]) cylinder(60,7,7); 
+   	translate([x1+frame_width,34/2,-10]) cylinder(60,7,7); 
+
+		// pin holes for slide
+		translate([x2,34/2,   40]) cylinder(25,3,3); 
+   	translate([x2+85,34/2,40]) cylinder(25,3,3); 
+
+    } 
+}
+
+
+lower_beam();
+translate([0,-frame_width+44,0]) scale([1,-1,1]) lower_beam();
+
+translate([420.5,x1+44/2,-50]) rotate([0,0,-90]) bottom_bar();  // rear bar
+translate([1415.5,x1+44/2,-50]) rotate([0,0,-90]) bottom_bar(); // front bar
+
+translate([885,   x2+44/2,-50]) rotate([0,0,-90]) bottom_center_bar();  // rear c bar
+translate([988-34,x2+44/2,-50]) rotate([0,0,-90]) bottom_center_bar();  // front c bar
+
+
+translate([914,                220,-53+7]) rotate([0,90+15,-90]) side_support();
+translate([914+44,-frame_width-220,-53+7]) rotate([0,90+15, 90]) side_support();
