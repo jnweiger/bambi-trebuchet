@@ -3,15 +3,20 @@
 
 explode = 0;	// 50;		// descend all the bottom bars
 
+$fs=1;		// segment length in circle: 1mm
+eps=0.0001;	// exactly touching surfaces are not exportable to STL. Make gaps at pocket-depth
 frame_width=412;
 bar_l1=570;
 bar_l2=980;
 side_x=176;
 side_alpha=15;
-side_beta=32;
+side_beta=30;
 x1=(bar_l1-frame_width)/2;
 x2=(bar_l2-frame_width)/2;
 d1=8;		// bolt diameter for gluing struts
+tri_width = 510;
+cross_board_len = 486;
+
 
 side_x_center =   (988+885)/2;
 center_pocket_w =  988-885;
@@ -56,22 +61,23 @@ module lower_beam()
 
       // Pocket for bottom bar rear
       translate([420, -10, -10]) cube([35, 60, 10+pocket_depth]);
+
       // Hole for bottom bar rear	
-      translate([420+35/2, 22, 0]) cylinder(50, 7,7);
-      // 480?? Hole for bolting rear strut
-      rotate([-90,0,0]) translate([480,-22,-10]) cylinder(60,d1/2,d1/2); 
+      translate([420+35/2, 44/2+pocket_depth, 0]) cylinder(50, 7,7);
+      // Hole for bolting rear strut
+      rotate([-90,0,0]) translate([side_x_center-tri_width+44,-44/2-pocket_depth,-10]) cylinder(60,d1/2,d1/2); 
 
       // Pocket for bottom bars center
       translate([side_x_center-center_pocket_w/2, -10, -10]) cube([center_pocket_w, 60, 10+pocket_depth]);		
       // hole for bolting center post
-      rotate([-90,0,0]) translate([side_x_center,-22-pocket_depth,-10]) cylinder(60,d1/2,d1/2);     
+      rotate([-90,0,0]) translate([side_x_center,-44/2-pocket_depth,-10]) cylinder(60,d1/2,d1/2);     
 
       // Pocket for bottom bar front
       translate([1415, -10, -10]) cube([35, 60, 10+pocket_depth]);
+      // Hole for bolting front triangle_post
+      rotate([-90,0,0]) translate([side_x_center+tri_width-44,-22-pocket_depth,-10]) cylinder(60,d1/2,d1/2); 
       // Hole for bottom bar front	
       translate([1415+37/2, 22, 0]) cylinder(50, 7,7);
-      // 1400?? Hole for bolting front strut
-      rotate([-90,0,0]) translate([1400,-22,-10]) cylinder(60,d1/2,d1/2); 
     }
 }
 
@@ -102,7 +108,7 @@ module side_support()
       translate([0,0,44])  rotate([0,180-side_alpha,0]) translate([0,-10,-10]) cube([15,60,60]);
       translate([lss,0,0]) rotate([0,-side_alpha,0])    translate([0,-10,-10]) cube([15,60,60]);
 
-      // Hole for upper triangle bolt
+      // Hole for upper triangle bolt, into trangle_post
       rotate([-90,0,0]) translate([472,-38,-10]) cylinder(60,7,7); 
 
       // pockets for bottom center bars
@@ -127,8 +133,8 @@ module bottom_center_bar()
       translate([bar_l2,0,53]) rotate([0,135,0])  translate([0,-10,-10]) cube([8,60,20]);
       
       // lower beam pockets
-      translate([x2-45/2,            -10,53-7]) cube([45, 60, 10+pocket_depth]);
-      translate([x2-45/2+frame_width,-10,53-7]) cube([45, 60, 10+pocket_depth]);
+      translate([x2-45/2,            -10,53-pocket_depth-eps]) cube([45, 60, 10+pocket_depth]);
+      translate([x2-45/2+frame_width,-10,53-pocket_depth-eps]) cube([45, 60, 10+pocket_depth]);
 
       // holes for center posts
       rotate([-90,0,0]) translate([xc1+(44+44-pocket_depth)/2, -53/2,-10]) cylinder(60,7,7); 
@@ -137,7 +143,6 @@ module bottom_center_bar()
       // holes for side supports
       rotate([-90,0,0]) translate([x2-side_x+9,            -53/2,-10]) cylinder(60,7,7); 
       rotate([-90,0,0]) translate([x2+frame_width+side_x-9,-53/2,-10]) cylinder(60,7,7); 
-
     }
 }
 
@@ -157,8 +162,8 @@ module bottom_bar()
 	translate([bar_l1,0,53]) rotate([0,135,0])  translate([0,-10,-10]) cube([8,60,20]);
 
 	// beam pockets
-	translate([x1-45/2,            -10,53-pocket_depth]) cube([45,50,10+pocket_depth]);
-	translate([x1-45/2+frame_width,-10,53-pocket_depth]) cube([45,50,10+pocket_depth]);
+	translate([x1-45/2,            -10,53-pocket_depth-eps]) cube([45,50,10+pocket_depth]);
+	translate([x1-45/2+frame_width,-10,53-pocket_depth-eps]) cube([45,50,10+pocket_depth]);
 
 	// beam holes
 	translate([x1,            34/2,-10]) cylinder(60,7,7); 
@@ -172,7 +177,29 @@ module bottom_bar()
 
 module triangle_post()
 {
-    translate([0,-44+pocket_depth,-30]) cube([44,44,960]);
+  difference()
+    {
+      rotate([0,side_beta,0]) translate([0,-44+pocket_depth,-15]) cube([44,44,980]);
+
+      // face to touch the side supports
+      translate([tri_width-45/2,-44,690]) cube([40,60,150]);
+
+      // beveled outside to avoid sharp edges past the outer contour of the side supports
+      translate([tri_width-80,25,690]) rotate([side_alpha,0,0]) cube([60,60,160]);
+
+      // Hole for upper triangle bolt, into side_support
+      translate([tri_width-20,-17.6,700.8]) rotate([0,-90,0]) cylinder(100,7,7); 
+
+      // cut out for bottom_bar
+      translate([-22+eps,-60+pocket_depth+10,-70+2*pocket_depth+eps]) cube([50,60,70]);
+
+      // cut out for lower_beam
+      translate([0,-eps,-100+44+eps]) cube([80,60,100]);
+
+      // hole for bolting lower_beam, glued
+      translate([44,10,44/2+pocket_depth]) rotate([90,0,0]) cylinder(60,d1/2,d1/2); 
+
+    }
 }
 
 module center_post()
@@ -198,8 +225,6 @@ module center_post()
       }
   }
 
-cross_board_len = 442.5;
-
 module cross_board()
 {
   difference()
@@ -216,26 +241,25 @@ module cross_board()
 
 module side_triangle()
 {
-  tri_width = 510;
   union()
     {
-      %lower_beam();
-      translate([side_x_center-tri_width,0,0])                 rotate([0,side_beta,0]) triangle_post();
-      translate([side_x_center+tri_width,0,0]) scale([-1,1,1]) rotate([0,side_beta,0]) triangle_post();
+      lower_beam();
+      translate([side_x_center-tri_width,0,0])                 triangle_post();
+      translate([side_x_center+tri_width,0,0]) scale([-1,1,1]) triangle_post();
       translate([side_x_center-22,0,0]) rotate([0,00,0]) center_post();
       translate([side_x_center-cross_board_len/2,pocket_depth,418+44]) cross_board();
     }
 }
 
 
-% side_triangle();
-% translate([0,-frame_width+44,0]) scale([1,-1,1]) side_triangle();
+side_triangle();
+translate([0,-frame_width+44,0]) scale([1,-1,1]) side_triangle();
 
 translate([ 420.5, x1+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_bar();  // rear bar
 translate([1415.5, x1+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_bar(); // front bar
 
-%translate([side_x_center-center_pocket_w/2,   x2+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_center_bar();  // rear c bar
-%translate([side_x_center+center_pocket_w/2-34,x2+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_center_bar();  // front c bar
+translate([side_x_center-center_pocket_w/2,   x2+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_center_bar();  // rear c bar
+translate([side_x_center+center_pocket_w/2-34,x2+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_center_bar();  // front c bar
 
 
 translate([side_x_center-22,          44+side_x+explode,-53+2*pocket_depth]) rotate([0,90+side_alpha,-90]) side_support();
