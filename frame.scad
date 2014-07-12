@@ -199,6 +199,21 @@ module center_post()
       }
   }
 
+cross_board_len = 446-16;
+
+module cross_board()
+{
+  difference()
+    {
+      cube([cross_board_len, 16, 70]);
+      // slanted ends
+      rotate([0,side_beta,0]) translate([-50,-10,-20]) cube([50,30,120]);
+      translate([cross_board_len,0,0])rotate([0,-side_beta,0])translate([0, -10, -20]) cube([50,30,120]);
+      // slanted ends, beveled, 45°, 5mm
+      rotate([0,side_beta,0]) rotate([0,0,-45]) translate([-50-5,-10,-20]) cube([50,30,120]);
+      translate([cross_board_len,0,0]) rotate([0,-side_beta,0]) rotate([0,0,45]) translate([5, -10, -20]) cube([50,30,120]);
+    }
+}
 
 module side_triangle()
 {
@@ -209,6 +224,7 @@ module side_triangle()
       translate([side_x_center-tri_width,0,0])                 rotate([0,side_beta,0]) triangle_post();
       translate([side_x_center+tri_width,0,0]) scale([-1,1,1]) rotate([0,side_beta,0]) triangle_post();
       translate([side_x_center-22,0,0]) rotate([0,00,0]) center_post();
+      translate([side_x_center-cross_board_len/2,pocket_depth,428+44]) cross_board();
     }
 }
 
