@@ -1,11 +1,13 @@
 // (c) 2014 juewei@fabfolk.com
 // GPLv2.0 or ask.
 
+explode = 0;	// 50;		// descend all the bottom bars
+
 frame_width=412;
 bar_l1=570;
 bar_l2=980;
-side_x=220;
-side_alpha=17;
+side_x=176;
+side_alpha=15;
 side_beta=32;
 x1=(bar_l1-frame_width)/2;
 x2=(bar_l2-frame_width)/2;
@@ -14,7 +16,6 @@ d1=8;		// bolt diameter for gluing struts
 side_x_center =   (988+885)/2;
 center_pocket_w =  988-885;
 pocket_depth = 	7;
-explode = 0;		// descend all the bottom bars
 
 module rcube_xy(size, radius) 
 {
@@ -74,11 +75,11 @@ module lower_beam()
     }
 }
 
-module wedge15(len)
+module wedge_alpha(len)
 {
   difference()
     {
-      rotate([0,-15,0]) translate([0,0,-44]) cube([len,44,44]);
+      rotate([0,-side_alpha,0]) translate([0,0,-44]) cube([len,44,44]);
       translate([0,-10,-44]) cube([2*len, 60,44]);
     }
 }
@@ -86,15 +87,13 @@ module wedge15(len)
 module side_support()
 {
   lss=1248;	// Length side support
-  d1=8;		// bolt diameter for gluing struts
   translate([-lss,0,0]) difference()
     {
       union()
         {
           cube([lss,44,44]);		// side support
-          translate([0,0,44.2]) wedge15(106);  //hypothenusis=110
-          translate([413,0,44.2]) wedge15(92); //hypothenusis=95
-		
+          translate([0,0,44.2]) wedge_alpha(106);  //hypothenusis=110
+          translate([419,0,44.2]) wedge_alpha(88); //hypothenusis=95
         }
       // Hole for main shaft
       rotate([0,-side_alpha,0]) translate([60,22,-30]) cylinder(100,8,8); 
@@ -136,8 +135,8 @@ module bottom_center_bar()
       rotate([-90,0,0]) translate([xc2-(44+44-pocket_depth)/2, -53/2,-10]) cylinder(60,7,7); 
 
       // holes for side supports
-      rotate([-90,0,0]) translate([x2-side_x+8,            -53/2,-10]) cylinder(60,7,7); 
-      rotate([-90,0,0]) translate([x2+frame_width+side_x-8,-53/2,-10]) cylinder(60,7,7); 
+      rotate([-90,0,0]) translate([x2-side_x+9,            -53/2,-10]) cylinder(60,7,7); 
+      rotate([-90,0,0]) translate([x2+frame_width+side_x-9,-53/2,-10]) cylinder(60,7,7); 
 
     }
 }
@@ -199,7 +198,7 @@ module center_post()
       }
   }
 
-cross_board_len = 446-16;
+cross_board_len = 442.5;
 
 module cross_board()
 {
@@ -224,23 +223,23 @@ module side_triangle()
       translate([side_x_center-tri_width,0,0])                 rotate([0,side_beta,0]) triangle_post();
       translate([side_x_center+tri_width,0,0]) scale([-1,1,1]) rotate([0,side_beta,0]) triangle_post();
       translate([side_x_center-22,0,0]) rotate([0,00,0]) center_post();
-      translate([side_x_center-cross_board_len/2,pocket_depth,428+44]) cross_board();
+      translate([side_x_center-cross_board_len/2,pocket_depth,418+44]) cross_board();
     }
 }
 
 
-#side_triangle();
-translate([0,-frame_width+44,0]) scale([1,-1,1]) side_triangle();
+% side_triangle();
+% translate([0,-frame_width+44,0]) scale([1,-1,1]) side_triangle();
 
-translate([420.5,x1+44/2,-50]) rotate([0,0,-90]) bottom_bar();  // rear bar
-translate([1415.5,x1+44/2,-50]) rotate([0,0,-90]) bottom_bar(); // front bar
+translate([ 420.5, x1+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_bar();  // rear bar
+translate([1415.5, x1+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_bar(); // front bar
 
 %translate([side_x_center-center_pocket_w/2,   x2+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_center_bar();  // rear c bar
 %translate([side_x_center+center_pocket_w/2-34,x2+44/2,-53+2*pocket_depth-explode]) rotate([0,0,-90]) bottom_center_bar();  // front c bar
 
 
-% translate([side_x_center-22,          44+220,-53+7]) rotate([0,90+side_alpha,-90]) side_support();
-% translate([side_x_center+22,-frame_width-220,-53+7]) rotate([0,90+side_alpha, 90]) side_support();
+translate([side_x_center-22,          44+side_x+explode,-53+2*pocket_depth]) rotate([0,90+side_alpha,-90]) side_support();
+translate([side_x_center+22,-frame_width-side_x-explode,-53+2*pocket_depth]) rotate([0,90+side_alpha, 90]) side_support();
 
 // rcube_xy([100,100,100],20);
 // translate([0,0,100])rcube_xy([100,100,100],40);
