@@ -229,13 +229,16 @@ module cross_board()
 {
   difference()
     {
-      cube([cross_board_len, 16, 70]);
+      cube([cross_board_len, 16, 60]);
       // slanted ends
       rotate([0,side_beta,0]) translate([-50,-10,-20]) cube([50,30,120]);
       translate([cross_board_len,0,0])rotate([0,-side_beta,0])translate([0, -10, -20]) cube([50,30,120]);
       // slanted ends, beveled, 45°, 5mm
       rotate([0,side_beta,0]) rotate([0,0,-45]) translate([-50-5,-10,-20]) cube([50,30,120]);
       translate([cross_board_len,0,0]) rotate([0,-side_beta,0]) rotate([0,0,45]) translate([5, -10, -20]) cube([50,30,120]);
+
+      // bevel top edge, to not intersect with side_support
+      translate([0,0,60+7.06]) rotate([-45,0,0]) cube([cross_board_len,30,30]);
     }
 }
 
@@ -247,7 +250,7 @@ module side_triangle()
       translate([side_x_center-tri_width,0,0])                 triangle_post();
       translate([side_x_center+tri_width,0,0]) scale([-1,1,1]) triangle_post();
       translate([side_x_center-22,0,0]) rotate([0,00,0]) center_post();
-      translate([side_x_center-cross_board_len/2,pocket_depth,418+44]) cross_board();
+      translate([side_x_center-cross_board_len/2,pocket_depth,432+44]) cross_board();
     }
 }
 
