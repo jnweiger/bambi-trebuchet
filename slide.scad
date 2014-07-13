@@ -24,7 +24,7 @@ module slide(w=60,d=18,l=1500)
   uh=w;
   ud=d;
 
-  translate([0,-0.5*w,0.5*uh]) 
+  translate([-ud,-0.5*w,0.5*uh]) 
     {
       difference()
 	{

@@ -3,6 +3,8 @@
 
 explode = 0;	// 50;		// descend all the bottom bars
 
+use <slide.scad>		// module slide(w=60,d=18,l=1500)
+
 $fs=1;		// segment length in circle: 1mm
 eps=0.0001;	// exactly touching surfaces are not exportable to STL. Make gaps at pocket-depth
 frame_width=412;
@@ -267,6 +269,8 @@ translate([side_x_center+center_pocket_w/2-34,x2+44/2,-53+2*pocket_depth-explode
 
 translate([side_x_center-22,          44+side_x+explode,-53+2*pocket_depth]) rotate([0,90+side_alpha,-90]) side_support();
 translate([side_x_center+22,-frame_width-side_x-explode,-53+2*pocket_depth]) rotate([0,90+side_alpha, 90]) side_support();
+
+translate([420.5+(34-18)/2,-frame_width/2,2*pocket_depth]) slide(w=60,d=18,l=1050);
 
 // rcube_xy([100,100,100],20);
 // translate([0,0,100])rcube_xy([100,100,100],40);
