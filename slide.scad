@@ -1,6 +1,6 @@
 // (c) 2014 juewei@fabfolk.com
 //
-// slide for bambi trebuichet
+// slide for bambi trebuchet
 
 module slide_support(h=60,d=18,l=150,w=60,z=18)
 {

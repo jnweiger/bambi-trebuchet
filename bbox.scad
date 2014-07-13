@@ -56,4 +56,4 @@ module bbox(x,y,z,b=0,bx=0,by=0,bz=0)
     }
 }
 
-bbox(100,200,250,5);
+bbox(100,200,250, bx=5,by=10,bz=1);
