@@ -16,10 +16,8 @@ module cw_box_handle(wn=1.5,hn=3,l=400,bw=174,bz=27,h=450)
 	{
 	  translate([-53/2,-w/2,0])          bbox(53,34,h,bz=3);
 	  translate([-53/2, w/2-34,0])       bbox(53,34,h,bz=3);
-	  translate([-53/2,-w/2+34,h-80])   bbox(53,34,80,bz=3);
-	  translate([-53/2, w/2-2*34,h-80]) bbox(53,34,80,bz=3);
-	  // translate([-53/2,-w/2+2*34,h-80])  bbox(53,34,80,bz=3);
-	  // translate([-53/2, w/2-3*34,h-80])  bbox(53,34,80,bz=3);
+	  translate([-53/2,-w/2+34,h-80])    bbox(53,20,80,bz=3);
+	  translate([-53/2, w/2-34-20,h-80]) bbox(53,20,80,bz=3);
 
 	  translate([ 53/2,-w/2,0])    bbox(44,w,44,by=3);
 	  translate([-44-53/2,-w/2,0]) bbox(44,w,44,by=3);

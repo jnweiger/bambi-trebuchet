@@ -5,6 +5,7 @@ explode = 0;	// 50;		// descend all the bottom bars
 
 use <slide.scad>		// module slide(w=60,d=18,l=1500)
 use <cw_box.scad>		// module cw_box(wn=2,hn=2.7,l=470,bw=120,bz=27,h=520)
+use <arm.scad>			// module arm(l1=1600, l2=400)
 
 $fs=1;		// segment length in circle: 1mm
 eps=0.0001;	// exactly touching surfaces are not exportable to STL. Make gaps at pocket-depth
@@ -257,6 +258,17 @@ module side_triangle()
     }
 }
 
+// hinge the box to the arm, hinge the arm to the frame
+module arm_with_box(alpha=15, beta=5, l1=1600, l2=400)
+{
+  cw_box_arm = 600;
+  rotate([0,alpha+90,0]) 
+    {
+      translate([l2,0,0]) rotate([0,beta-90-alpha,0]) translate([0,0,-cw_box_arm+40]) 
+      	cw_box(wn=1.5,hn=2.7,l=470,bw=120,bz=27,h=cw_box_arm);
+      rotate([0,0,180]) arm(l1,l2);
+    }
+}
 
 side_triangle();
 translate([0,-frame_width+44,0]) scale([1,-1,1]) side_triangle();
@@ -272,4 +284,4 @@ translate([side_x_center-22,          44+side_x+explode,-53+2*pocket_depth]) rot
 translate([side_x_center+22,-frame_width-side_x-explode,-53+2*pocket_depth]) rotate([0,90+side_alpha, 90]) side_support();
 
 translate([420.5+(34-18)/2,-frame_width/2+44/2,2*pocket_depth]) slide(w=60,d=18,l=1050);
-translate([1200,-frame_width/2+44/2,500]) cw_box(wn=1.5,hn=2.7,l=470,bw=120,bz=27,h=520);
+translate([side_x_center,-frame_width/2+44/2,1107]) arm_with_box(alpha=-130,beta=-3, l1=1600, l2=400);
