@@ -1,19 +1,23 @@
 // (c) 2014 juewei@fabfolk.com
 //
 // catapult arm for bambi trebuchet
+//
+// FIXME: arm_pyramid should be made of multiple layers
+//        "sperrverleimt."
 
 use <bbox.scad>
 
 $fs=1;	// segment size: 1mm
 
 d1=8;	// bolt diameter for gluing walls
-endl=80;
+endl=70;
+dh=14;		// diameter of pin holder
 
 // origin is center of main shaft.
-module arm_double_beam(l1=1600, l2=400, d=28)
+module arm_double_beam(l1=1620, l2=325, d=28)
 {
   l=l1+l2+endl;
-  lx=l*2/3;
+  lx=980;
 
   translate([-endl-l2, -d/2, 0]) union()
     {
@@ -24,10 +28,10 @@ module arm_double_beam(l1=1600, l2=400, d=28)
               bbox(l,d,d,bx=2);
 	      translate([0,0,-28]) bbox(lx,d,d,bx=2);
 	    }
-	  translate([lx,-10,0]) rotate([0,180-2,0]) cube([lx,d+20,d+20]);
+	  translate([lx,-10,0]) rotate([0,180-4,0]) cube([lx,d+20,d+20]);
 	  translate([endl+l2,-50,0]) rotate([-90,0,0]) cylinder(d+100,8,8);
 	  translate([endl,-50,0])    rotate([-90,0,0]) cylinder(d+100,8,8);
-	  for (x = [endl/2 : 250 : lx-endl])
+	  for (x = [endl/2 : 210 : lx-endl])
 	    {
 	      translate([x,d/2,-28-10]) cylinder(d+10+10, 3,3);
 	    }
@@ -49,7 +53,7 @@ module arm_head_side(w=28,s=8)
         }
 
       // hole for pin holder
-      translate([-8,10,w/2]) rotate([90,0,0]) cylinder(s+10,8,8);
+      translate([-dh/2,10,w/2]) rotate([90,0,0]) cylinder(s+10,dh/2,dh/2);
 
       // flatten left right outside
       translate([-3*w,0,-10]) rotate([0,0,10]) cube([3*w,s+10,w+s+20]);
@@ -66,7 +70,6 @@ module arm_pin_holder(w=28,s=6,d=6)
 {
   l=w+2*d+2*s+1*s;
   k=1;
-  dh=16;
   dp=2;
   difference()
     {
@@ -90,7 +93,7 @@ module arm_head(w=28, alpha=6)
 {
   translate([0, (w)/2,0])                 arm_head_side(w,6);
   translate([0,-(w)/2,0]) scale([1,-1,1]) arm_head_side(w,6);
-  translate([-8,0,w/2]) rotate([0,-alpha,0]) arm_pin_holder();
+  translate([-dh/2,0,w/2]) rotate([0,-alpha,0]) arm_pin_holder();
 }
 
 module arm_pyramid(h=20)
@@ -118,7 +121,7 @@ module arm_pyramid(h=20)
 }
 
 // origin is center of main shaft.
-module arm(l1=1600, l2=400)
+module arm(l1=1620, l2=325)
 {
   arm_double_beam(l1-20, l2, d=28);
   translate([l1,0,0]) arm_head(w=28,alpha=12);
