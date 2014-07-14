@@ -14,7 +14,8 @@ endl=70;
 dh=14;		// diameter of pin holder
 
 // origin is center of main shaft.
-module arm_double_beam(l1=1620, l2=325, d=28)
+// l1=1624/l2=325 ratio is 1:5
+module arm_double_beam(l1=1625, l2=325, d=28)
 {
   l=l1+l2+endl;
   lx=980;
@@ -120,8 +121,9 @@ module arm_pyramid(h=20)
     }
 }
 
-// origin is center of main shaft.
-module arm(l1=1620, l2=325)
+// origin is center of main shaft.	
+// l1=1624/l2=325 ratio is 1:5
+module arm(l1=1625, l2=325)
 {
   arm_double_beam(l1-20, l2, d=28);
   translate([l1,0,0]) arm_head(w=28,alpha=12);
